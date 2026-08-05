@@ -1,0 +1,9 @@
+# Grafana datasource provisioning. NOT executed in this sandbox (no
+# Docker daemon) -- see docs/observability.md §5.
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true

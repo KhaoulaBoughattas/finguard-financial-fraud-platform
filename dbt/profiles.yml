@@ -1,0 +1,21 @@
+# dbt connection profile. Deliberately reuses the SAME POSTGRES_* env vars
+# as src/common/config.py (see .env.example) rather than inventing DBT_-
+# prefixed duplicates -- one source of truth for "which Postgres, which
+# credentials" across the whole repo. Never hardcode credentials here.
+#
+# Usage: dbt run --profiles-dir dbt (from the repo root) or run dbt from
+# inside dbt/ with this file present (dbt looks in the current directory
+# before falling back to ~/.dbt/profiles.yml).
+
+finguard:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST', 'localhost') }}"
+      port: "{{ env_var('POSTGRES_PORT', '5432') | int }}"
+      user: "{{ env_var('POSTGRES_USER', 'finguard') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
+      dbname: "{{ env_var('POSTGRES_DB', 'finguard') }}"
+      schema: public
+      threads: 4

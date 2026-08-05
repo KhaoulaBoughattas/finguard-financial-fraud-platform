@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: Staged customer reference data.
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+      - name: risk_segment
+        tests:
+          - accepted_values:
+              values: ['LOW', 'MEDIUM', 'HIGH']
+
+  - name: stg_accounts
+    description: Staged account reference data.
+    columns:
+      - name: account_id
+        tests: [unique, not_null]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('stg_customers')
+                  field: customer_id
+
+  - name: stg_merchants
+    description: Staged merchant reference data.
+    columns:
+      - name: merchant_id
+        tests: [unique, not_null]
+
+  - name: stg_transactions
+    description: Staged transaction data with ground-truth fraud labels.
+    columns:
+      - name: transaction_id
+        tests: [unique, not_null]
+      - name: account_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('stg_accounts')
+                  field: account_id
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('stg_customers')
+                  field: customer_id
+      - name: merchant_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('stg_merchants')
+                  field: merchant_id
+      - name: amount
+        tests:
+          - not_null
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['APPROVED', 'DECLINED', 'FAILED']

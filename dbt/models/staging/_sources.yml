@@ -1,0 +1,38 @@
+version: 2
+
+# LOCAL/SANDBOX NOTE: in the target architecture (Phase 0), dbt would read
+# from the Silver Delta table (Phase 3) via Databricks SQL. Delta Lake could
+# not be executed in this sandbox (Maven Central blocked -- see Phase 3
+# close-out report and docs/spark-streaming.md §7), so these sources point
+# at the Postgres reference tables from Phase 1 instead -- the only
+# end-to-end materialized data available here. See docs/dbt.md for the full
+# explanation and exactly what would change to point this at Silver Delta
+# instead.
+sources:
+  - name: finguard_raw
+    schema: public
+    tables:
+      - name: customers
+        description: Raw customer reference data, loaded by the Phase 1 generator (--persist-db).
+        columns:
+          - name: customer_id
+            tests: [unique, not_null]
+      - name: accounts
+        description: Raw account reference data.
+        columns:
+          - name: account_id
+            tests: [unique, not_null]
+      - name: merchants
+        description: Raw merchant reference data.
+        columns:
+          - name: merchant_id
+            tests: [unique, not_null]
+      - name: transactions
+        description: >
+          Raw synthetic transaction data with ground-truth fraud labels
+          (is_fraud, fraud_pattern) from the Phase 1 generator. Stands in
+          for the Silver Delta table's validated transaction stream in this
+          sandbox -- see the note above.
+        columns:
+          - name: transaction_id
+            tests: [unique, not_null]

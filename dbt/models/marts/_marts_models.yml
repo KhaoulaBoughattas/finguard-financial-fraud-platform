@@ -1,0 +1,121 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: Customer dimension.
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+
+  - name: dim_account
+    description: Account dimension.
+    columns:
+      - name: account_id
+        tests: [unique, not_null]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('dim_customer')
+                  field: customer_id
+
+  - name: dim_merchant
+    description: Merchant dimension.
+    columns:
+      - name: merchant_id
+        tests: [unique, not_null]
+
+  - name: dim_location
+    description: Distinct-country location dimension.
+    columns:
+      - name: location_id
+        tests: [unique, not_null]
+      - name: country
+        tests: [unique, not_null]
+
+  - name: dim_date
+    description: Date spine covering the observed transaction date range.
+    columns:
+      - name: date_day
+        tests: [unique, not_null]
+
+  - name: fact_transactions
+    description: One row per transaction -- the central fact table.
+    columns:
+      - name: transaction_id
+        tests: [unique, not_null]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('dim_customer')
+                  field: customer_id
+      - name: account_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('dim_account')
+                  field: account_id
+      - name: merchant_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('dim_merchant')
+                  field: merchant_id
+
+  - name: fact_fraud_alerts
+    description: >
+      One row per fraud-flagged transaction. PROVISIONAL -- derived from
+      synthetic ground-truth labels, not a real fraud engine. See the
+      model's own SQL comment and docs/dbt.md.
+    columns:
+      - name: alert_id
+        tests: [unique, not_null]
+      - name: transaction_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('fact_transactions')
+                  field: transaction_id
+
+  - name: fact_customer_risk
+    description: >
+      SCD2-shaped customer risk state. PROVISIONAL single-snapshot
+      instantiation -- see the model's own SQL comment and docs/dbt.md.
+    columns:
+      - name: customer_risk_key
+        tests: [unique, not_null]
+      - name: customer_id
+        tests:
+          - unique  # true today only because there is exactly one risk
+            # state per customer so far (no history yet) -- this test
+            # should be REMOVED once Phase 5 starts writing successive
+            # rows per customer, at which point only is_current=true rows
+            # should be unique per customer, not the whole table.
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('dim_customer')
+                  field: customer_id
+      - name: risk_level
+        tests:
+          - accepted_values:
+              values: ['LOW', 'MEDIUM', 'HIGH']
+
+  - name: fact_account_activity
+    description: One row per account, aggregated activity summary.
+    columns:
+      - name: account_id
+        tests: [unique, not_null]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                  to: ref('dim_customer')
+                  field: customer_id

@@ -1,0 +1,28 @@
+# Dockerfile for the FinGuard FastAPI scoring service.
+# NOT built/run in this sandbox (no Docker daemon -- see
+# docs/observability.md §5); written to be ready wherever Docker is
+# available, mirroring the same honesty pattern as Kafka (Phase 2) and
+# Delta (Phase 3).
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY src/ ./src/
+
+# Non-root container (Phase 9): the official postgres/kafka images already
+# run as non-root by default; this app image didn't, and ran as root with
+# no reason to -- the process needs no elevated capability (no port <1024,
+# no host filesystem writes outside its own working directory). A
+# container escape or dependency-supply-chain compromise while running as
+# root gets root on the host if the container runtime is also
+# misconfigured; running as a dedicated unprivileged user removes that
+# specific escalation path at near-zero cost. See docs/security.md §4.
+RUN useradd --create-home --uid 1000 --shell /usr/sbin/nologin finguard
+USER finguard
+
+EXPOSE 8000
+
+CMD ["python", "-m", "uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

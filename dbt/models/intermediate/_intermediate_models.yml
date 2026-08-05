@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: int_transactions_enriched
+    description: One row per transaction, enriched with customer/account/merchant attributes.
+    columns:
+      - name: transaction_id
+        tests: [unique, not_null]
+      - name: customer_id
+        tests: [not_null]
+      - name: event_date
+        tests: [not_null]

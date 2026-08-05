@@ -1,0 +1,16 @@
+# Prometheus scrape configuration. NOT executed in this sandbox (no Docker
+# daemon -- see docs/observability.md §5); written and reviewed carefully
+# so it is ready to run wherever Docker is available.
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: finguard-api
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["api:8000"]  # container-to-container hostname, matches
+        # docker-compose.yml's `api` service -- not localhost, same
+        # internal-vs-host-listener distinction documented for Kafka
+        # (docs/kafka.md §1) and Postgres in docker-compose.yml's api
+        # service definition.
