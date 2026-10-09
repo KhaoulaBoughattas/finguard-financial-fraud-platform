@@ -703,16 +703,19 @@ Terraform: 9/9 directories HCL-valid, 0 composition problems
 ```
 ---
 
-##  Author
+---
+
+## 👤 Author
 
 <div align="center">
 
-**Khoukha BOUGHATTAS**
-*Data Engineering & Decision Support Systems*
+**Khawla BOUGHATTAS**
+*Data Engineering & Decision Support Systems · ENET'COM Sfax · Class of 2026*
 
-[![GitHub](https://img.shields.io/badge/GitHub-khoukha--boughattas-181717?style=for-the-badge&logo=github)](https://github.com/khoukha-boughattas)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/khoukha-boughattas)
+[![GitHub](https://img.shields.io/badge/GitHub-khaoula--boughattas-181717?style=for-the-badge&logo=github)](https://github.com/khaoula-boughattas)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/khaoula-boughattas-983597295/)
 
 </div>
 
 ---
+
