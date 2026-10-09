@@ -1,6 +1,5 @@
 # FinGuard Financial — Real-Time Financial Risk & Fraud Data Platform
 
-
 ## Project Overview
 An enterprise-grade, end-to-end Data Engineering platform that simulates a modern financial fraud detection system. The project demonstrates how real-time transactions are ingested, validated, processed, transformed, and served using a production-inspired Lakehouse architecture built with Apache Kafka, Spark Structured Streaming, Delta Lake, dbt, Airflow, MLflow, FastAPI, Docker, Terraform, and Azure.
 
